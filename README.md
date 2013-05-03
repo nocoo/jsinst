@@ -15,11 +15,15 @@ On any existing DOM elements, by adding "jsinst" class and "data-feature", "data
 
 Example:
 
-    <input class="jsinst" data-feature="inputbox" data-value="default" type="text" placeholder="Type some thing here." />
+```html
+<input class="jsinst" data-feature="inputbox" data-value="default" type="text" placeholder="Type some thing here." />
+```
 
 When user click on this input box, a instrumentation log will be queued, and will be sent to your server.
 
-    {"feature":"inputbox","data":"default","timestamp":1367570833695}
+```javascript
+{"feature":"inputbox","data":"default","timestamp":1367570833695}
+```
 
 ## Configurations
 
@@ -36,28 +40,34 @@ By costomize the global config, you can make jsinst work as you want.
 
 In code:
 
-    var global_config = {
-        'enabled': true,
-        'classname': 'jsinst',
-        'feature': 'data-feature',
-        'value': 'data-value',
-        'max_queue': 3,
-        'method': 'get',
-        'endpoint': '/',
-        'data': 'data'
-    };
+```javascript
+var global_config = {
+    'enabled': true,
+    'classname': 'jsinst',
+    'feature': 'data-feature',
+    'value': 'data-value',
+    'max_queue': 3,
+    'method': 'get',
+    'endpoint': '/',
+    'data': 'data'
+};
+```
 
 ## Events
 
 You can subscribe "queue" event or/and "send" event, to add your own actions when an event has been queued or sent.
 
-    jsinst.register('queue', function(data) {
-        console.log('Queue Event: ' + JSON.stringify(data));
-    }, this);
+```javascript
+jsinst.register('queue', function(data) {
+    console.log('Queue Event: ' + JSON.stringify(data));
+}, this);
+```
 
-    jsinst.register('send', function(data) {
-        jsinst.log('Send Event: ' + JSON.stringify(data));
-    }, this);
+```javascript
+jsinst.register('send', function(data) {
+    jsinst.log('Send Event: ' + JSON.stringify(data));
+}, this);
+```
 
 # License
 (The MIT License)
