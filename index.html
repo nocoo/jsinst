@@ -52,22 +52,23 @@
             </section>
             <footer><p>jsinst 0.0.1, the MIT License, <a href="http://about.me/nocoo">@zhengli</a>, <a href="https://github.com/nocoo/jsinst">Github</a></p></footer>
         </div>
-        <script id="seajsnode" src="./js/sea.min.js"></script>
+        <script src="./js/script.js"></script>
         <script>
             (function () {
                 'use strict';
-                /*global seajs*/
-                seajs.use([ './js/jsinst.console', './js/jsinst' ], function (console, jsinst) {
+                /*global $script*/
+                $script(['./js/jsinst.console.js', './js/jsinst.js'], 'jsinst');
+                $script.ready('jsinst', function () {
                     for (var i = 0; i < 100; ++i) {
-                        console.log('Hello World: ' + i);
+                        jsinst.log('Hello World: ' + i);
                     }
 
                     jsinst.register('queue', function(data) {
-                        console.log('Queue Event: ' + JSON.stringify(data));
+                        jsinst.log('Queue Event: ' + JSON.stringify(data));
                     }, this);
 
                     jsinst.register('send', function(data, method) {
-                        console.log('Send Event: [' + method + '] ' + JSON.stringify(data));
+                        jsinst.log('Send Event: [' + method + '] ' + JSON.stringify(data));
                     }, this);
                 });
             }());

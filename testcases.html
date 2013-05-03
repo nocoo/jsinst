@@ -25,13 +25,14 @@
             <footer><p>jsinst 0.0.1, the MIT License, <a href="http://about.me/nocoo">@zhengli</a>, <a href="https://github.com/nocoo/jsinst">Github</a></p></footer>
         </div>
 
-        <script id="seajsnode" src="http://code.jquery.com/qunit/qunit-1.11.0.js"></script>
-        <script id="seajsnode" src="./js/sea.min.js"></script>
+        <script src="http://code.jquery.com/qunit/qunit-1.11.0.js"></script>
+        <script src="./js/script.js"></script>
         <script>
             (function () {
                 'use strict';
-                /*global seajs*/
-                seajs.use([ './js/jsinst' ], function (jsinst) {
+                /*global $script*/
+                $script(['./js/jsinst.console.js', './js/jsinst.js'], 'jsinst');
+                $script.ready('jsinst', function () {
                     module('Core');
                     test('timestamp', function() {
                         jsinst.reset();

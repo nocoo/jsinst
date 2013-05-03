@@ -5,13 +5,14 @@
     @license MIT
 */
 
-define(function(require, exports, module) {
+var jsinst;
+(function(jsinst) {
     var config = {
         'auto_scroll': true
     };
     var el = document.getElementById('console');
 
-    exports.log = function(message, id, native) {
+    jsinst.log = function(message, id, native) {
         if (id) {
             el = document.getElementById(id);
         }
@@ -30,4 +31,4 @@ define(function(require, exports, module) {
             console.log(message);
         }
     };
-});
+})(jsinst || (jsinst = {}));

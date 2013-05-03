@@ -5,7 +5,8 @@
     @license MIT
 */
 
-define(function(require, exports, module) {
+var jsinst;
+(function(jsinst) {
     var global_config = {
         'enabled': true,
         'classname': 'jsinst',
@@ -38,7 +39,7 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.reset = function() {
+    jsinst.reset = function() {
         delete track_list;
         delete event_queue;
         delete callback_queue;
@@ -59,7 +60,7 @@ define(function(require, exports, module) {
                 event.feature = feature;
                 event.data = value;
 
-                exports.queue(event);
+                jsinst.queue(event);
             };
 
             var list = document.getElementsByClassName(global_config.classname);
@@ -80,7 +81,7 @@ define(function(require, exports, module) {
             };
 
             var on_window_unload = function(evt) {
-                exports.send(exports.serialize());
+                jsinst.send(jsinst.serialize());
                 event_queue = [];
             };
 
@@ -89,7 +90,7 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.queue = function(event) {
+    jsinst.queue = function(event) {
         if (!global_config.enabled) { return; }
 
         if (!event.timestamp) {
@@ -98,7 +99,7 @@ define(function(require, exports, module) {
 
         event_queue.push(event);
         if (event_queue.length >= global_config.max_queue) {
-            exports.send(exports.serialize());
+            jsinst.send(jsinst.serialize());
             event_queue = [];
         }
 
@@ -112,7 +113,7 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.send = function(data, method) {
+    jsinst.send = function(data, method) {
         if (!global_config.enabled) { return; }
         if (!method) {
             method = 'get';
@@ -122,7 +123,7 @@ define(function(require, exports, module) {
             case 'get':
             default: {
                 if (dom_sender) {
-                    dom_sender.setAttribute('src', global_config.endpoint + data + '&' + exports.timestamp());
+                    dom_sender.setAttribute('src', global_config.endpoint + data + '&' + jsinst.timestamp());
                 }
                 break;
             }
@@ -138,13 +139,13 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.start = function(name) {
+    jsinst.start = function(name) {
         name = name || 'default';
-        track_list[name] = exports.timestamp();
+        track_list[name] = jsinst.timestamp();
     };
 
-    exports.end = function(name) {
-        var ts = exports.timestamp();
+    jsinst.end = function(name) {
+        var ts = jsinst.timestamp();
 
         name = name || 'default';
 
@@ -157,13 +158,13 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.info = function() {
+    jsinst.info = function() {
         console.log(global_config);
         console.log(track_list);
         console.log(event_queue);
     };
 
-    exports.register = function(event, callback, that) {
+    jsinst.register = function(event, callback, that) {
         switch (event) {
             case 'queue': {
                 callback_queue.push({ 'callback': callback, 'that': that });
@@ -176,7 +177,7 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.serialize = function() {
+    jsinst.serialize = function() {
         var cache = [], item;
         cache.push('[');
 
@@ -195,9 +196,9 @@ define(function(require, exports, module) {
         return cache.join('');
     };
 
-    exports.timestamp = function() {
+    jsinst.timestamp = function() {
         return (new Date).getTime();
     };
 
-    exports.reset();
-});
+    jsinst.reset();
+})(jsinst || (jsinst = {}));
