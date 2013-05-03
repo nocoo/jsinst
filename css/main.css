@@ -33,8 +33,9 @@ h1, h2, h3 { border-bottom: 1px solid #CACACA; margin: 10px 0; line-height: 32px
 
 body { background: #F1EBEB; font-family: 'Segoe UI','SegoeUI','Arial','Helvetica'; font-size: 0.8em; }
 a { color: #24C0EB; }
+header { background: #24C0EB; }
 header h1 { font-size: 32px; line-height: 60px; margin: 20px 0 0 10px; font-family: Consolas, 'Liberation Mono', Courier, monospace; border: none; padding: 0; }
-header h1 a { text-decoration: none; color: #24C0EB; }
+header h1 a, header h1 a:hover, header h1 a:active { text-decoration: none; color: #FFF; text-shadow: 2px 2px 3px #777; }
 header .menu { background: #5CCEEE; height: 30px; padding: 0 10px; }
 header .menu li { float: left; line-height: 30px; }
 header .menu li a { text-decoration: none; color: #FFF; display: block; padding: 0 5px; margin-right: 10px; }
