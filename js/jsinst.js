@@ -12,8 +12,10 @@ var jsinst;
         'classname': 'jsinst',
         'feature': 'data-feature',
         'value': 'data-value',
-        'max_queue': 10,
-        'endpoint': '/?data='
+        'max_queue': 3,
+        'method': 'get',
+        'endpoint': '/',
+        'data': 'data'
     };
 
     var dom_sender, track_list, event_queue, callback_queue, callback_send;
@@ -72,16 +74,18 @@ var jsinst;
 
             // Register window events
             var on_window_load = function(evt) {
-                dom_sender = document.createElement('img');
-                dom_sender.setAttribute('style', 'width:0;height:0;display:none;');
-                var body = document.getElementsByTagName('body');
-                if (body && body.length === 1) {
-                    body[0].appendChild(dom_sender);
+                if (global_config.method.toLowerCase() === 'image') {
+                    dom_sender = document.createElement('img');
+                    dom_sender.setAttribute('style', 'width:0;height:0;display:none;');
+                    var body = document.getElementsByTagName('body');
+                    if (body && body.length === 1) {
+                        body[0].appendChild(dom_sender);
+                    }
                 }
             };
 
             var on_window_unload = function(evt) {
-                jsinst.send(jsinst.serialize());
+                jsinst.send(jsinst.serialize(), false);
                 event_queue = [];
             };
 
@@ -99,7 +103,7 @@ var jsinst;
 
         event_queue.push(event);
         if (event_queue.length >= global_config.max_queue) {
-            jsinst.send(jsinst.serialize());
+            jsinst.send(jsinst.serialize(), true);
             event_queue = [];
         }
 
@@ -113,18 +117,43 @@ var jsinst;
         }
     };
 
-    jsinst.send = function(data, method) {
+    jsinst.send = function(data, async) {
         if (!global_config.enabled) { return; }
-        if (!method) {
-            method = 'get';
-        }
+        if (data == '[]') { return; }
 
-        switch (method.toLowerCase()) {
-            case 'get':
+        var xhr = new XMLHttpRequest();
+        var url_get = global_config.endpoint + '?' + global_config.data + '=' + encodeURIComponent(data) + '&' + jsinst.timestamp();
+
+        switch (global_config.method.toLowerCase()) {
+            case 'image':
             default: {
                 if (dom_sender) {
-                    dom_sender.setAttribute('src', global_config.endpoint + data + '&' + jsinst.timestamp());
+                    dom_sender.setAttribute('src', url_get);
                 }
+                break;
+            }
+            case 'head': {
+                if (xhr) {
+                    xhr.open('HEAD', url_get, async);
+                    xhr.send(null);
+                }
+
+                break;
+            }
+            case 'get': {
+                if (xhr) {
+                    xhr.open('GET', url_get, async);
+                    xhr.send(null);
+                }
+
+                break;
+            }
+            case 'post': {
+                if (xhr) {
+                    xhr.open('POST', global_config.endpoint, async);
+                    xhr.send(encodeURIComponent(global_config.data) + '=' + encodeURIComponent(data));
+                }
+
                 break;
             }
         }
@@ -134,7 +163,7 @@ var jsinst;
         for (var i = 0, len = callback_send.length; i < len; ++i) {
             item = callback_send[i];
             if (item.callback && typeof(item.callback) === 'function') {
-                item.callback.apply(item.that, [ data, method ]);
+                item.callback.apply(item.that, [ data ]);
             }
         }
     };
