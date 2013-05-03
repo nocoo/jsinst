@@ -3,13 +3,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="author" content="@zhengli" />
-        <title>jsInst</title>
-        <link rel="stylesheet" type="text/css" href="./css/main.css" />
+        <meta name="description" content="jsinst is a light weight JavaScript toolkit for in page instrumentation and performance test. By adding very few extra properties to existing web page elements, you can easily know how your visitor interactive with your web page. MIT license." />
+        <title>jsinst - Open source JavaScript instrumentation and performance toolkit</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" />
+        <link rel="stylesheet" href="./css/main.css" />
     </head>
     <body class="p-index">
         <div class="wrapper">
             <header>
-                <h1 class="logo jsinst" data-feature="logo" data-value="click"><a href="index.html">jsinst</a></h1>
+                <h1 class="logo"><a href="index.html">jsinst</a></h1>
                 <ul class="menu">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="testcases.html">TestCases</a></li>
@@ -23,10 +25,30 @@
                 <p>jsinst can queue up user events in frontend, and send the data to your server as you demand.</p>
                 <p>It's fast, small and without dependency, have a try!</p>
 
-                <h2>How jsinst works</h2>
-                <section id="console" class="console">
-
+                <h2 class="jsinst" data-feature="howitworks" data-value="click">How jsinst works</h2>
+                <section class="form">
+                    <p>Please play with this form and watch the console output.</p>
+                    <p>
+                        <input class="jsinst" data-feature="inputbox" data-value="default" type="text" placeholder="Type some thing here." />
+                        <select class="jsinst" data-feature="option" data-value="select">
+                            <option>Option A</option>
+                            <option>Option B</option>
+                            <option>Option C</option>
+                        </select>
+                    </p>
+                    <p>
+                        <input class="btn btn-success jsinst" data-feature="button" data-value="ok" type="button" value="Go Ahead" />
+                        <input class="btn btn-danger jsinst" data-feature="button" data-value="abort" type="button" value="Abort" />
+                    </p>
                 </section>
+
+                <section id="console" class="console"></section>
+
+                <h2>The MIT License</h2>
+                <p>Copyright (c) 2013 Zheng Li</p>
+                <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+                <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+                <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
             </section>
             <footer><p>jsinst 0.0.1, the MIT License, <a href="http://about.me/nocoo">@zhengli</a>, <a href="https://github.com/nocoo/jsinst">Github</a></p></footer>
         </div>
@@ -41,7 +63,11 @@
                     }
 
                     jsinst.register('queue', function(data) {
-                        console.log('On Queue Event: ' + JSON.stringify(data));
+                        console.log('Queue Event: ' + JSON.stringify(data));
+                    }, this);
+
+                    jsinst.register('send', function(data, method) {
+                        console.log('Send Event: [' + method + '] ' + JSON.stringify(data));
                     }, this);
                 });
             }());

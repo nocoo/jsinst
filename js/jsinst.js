@@ -6,8 +6,6 @@
 */
 
 define(function(require, exports, module) {
-
-
     var global_config = {
         'enabled': true,
         'classname': 'jsinst',
@@ -17,28 +15,42 @@ define(function(require, exports, module) {
         'endpoint': '/?data='
     };
 
-    var dom_sender;
-    var track_list = {}, event_queue = [];
-    var callback_queue = [], callback_send = [];
+    var dom_sender, track_list, event_queue, callback_queue, callback_send;
     var serialize_map = { 'feature': 'f', 'data': 'd', 'timestamp': 'ts' };
+
+    var addHandler = function(target, event, handler) {
+        if (target.addEventListener) {
+            target.addEventListener(event, handler, false);
+        } else if (target.attachEvent) {
+            target.attachEvent('on' + event, handler);
+        } else {
+            target['on' + event] = handler;
+        }
+    };
+
+    var removeHandler = function(target, event, handler) {
+        if (target.removeEventListener) {
+            target.removeEventListener(event, handler, false);
+        } else if (target.detachEvent) {
+            target.detachEvent('on' + event, handler);
+        } else {
+            target['on' + event] = null;
+        }
+    };
 
     exports.reset = function() {
         delete track_list;
+        delete event_queue;
+        delete callback_queue;
+        delete callback_send;
+
         track_list = {};
-
-        if (!dom_sender) {
-            dom_sender = document.createElement('img');
-            dom_sender.setAttribute('style', 'width:0;height:0;display:none;');
-            var body = document.getElementsByTagName('body');
-
-            if (body && body.length === 1) {
-                body[0].appendChild(dom_sender);
-            } else {
-                global_config.enabled = false;
-            }
-        }
+        event_queue = [];
+        callback_queue = [];
+        callback_send = [];
 
         if (global_config.enabled) {
+            // Register click event to jsinst elements.
             var on_target_click = function(evt) {
                 var feature = evt.target.getAttribute('data-feature') || 'uknown';
                 var value = evt.target.getAttribute('data-value') || 'undefined';
@@ -53,12 +65,27 @@ define(function(require, exports, module) {
             var list = document.getElementsByClassName(global_config.classname);
             for (var i = 0, len = list.length; i < len; ++i) {
                 var item = list[i];
-                item.removeEventListener('click', on_target_click);
-                item.addEventListener('click', on_target_click, true);
+                removeHandler(item, 'click', on_target_click);
+                addHandler(item, 'click', on_target_click, true);
             }
 
-            event_queue = [];
-            event_send = [];
+            // Register window events
+            var on_window_load = function(evt) {
+                dom_sender = document.createElement('img');
+                dom_sender.setAttribute('style', 'width:0;height:0;display:none;');
+                var body = document.getElementsByTagName('body');
+                if (body && body.length === 1) {
+                    body[0].appendChild(dom_sender);
+                }
+            };
+
+            var on_window_unload = function(evt) {
+                exports.send(exports.serialize());
+                event_queue = [];
+            };
+
+            addHandler(window, 'load', on_window_load);
+            addHandler(window, 'beforeunload', on_window_unload);
         }
     };
 
@@ -87,12 +114,26 @@ define(function(require, exports, module) {
 
     exports.send = function(data, method) {
         if (!global_config.enabled) { return; }
-        switch (method) {
+        if (!method) {
+            method = 'get';
+        }
+
+        switch (method.toLowerCase()) {
+            case 'get':
             default: {
                 if (dom_sender) {
                     dom_sender.setAttribute('src', global_config.endpoint + data + '&' + exports.timestamp());
                 }
                 break;
+            }
+        }
+
+        // Event
+        var item;
+        for (var i = 0, len = callback_send.length; i < len; ++i) {
+            item = callback_send[i];
+            if (item.callback && typeof(item.callback) === 'function') {
+                item.callback.apply(item.that, [ data, method ]);
             }
         }
     };
