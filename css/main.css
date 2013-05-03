@@ -47,3 +47,6 @@ footer a { text-decoration: none; }
 .content p { color: #555; line-height: 20px; margin-bottom: 10px; }
 .console { font-family: Consolas, 'Liberation Mono', Courier, monospace; color: #FFF; background: #F5F5F5; padding: 10px; margin: 20px 0; overflow-y: scroll; height: 300px; border: 1px solid #CCC; border-radius: 4px; }
 .console p { line-height: 16px; margin-bottom: 8px; color: #333; text-shadow: 1px 1px 4px #DDD; }
+
+/* Pages */
+.p-testcases .content { padding: 10px; }
