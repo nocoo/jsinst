@@ -10,7 +10,12 @@
     <body class="p-testcases">
         <div class="wrapper">
             <header>
-                <h1 class="logo jsinst" data-feature="logo" data-value="click">jsinst</h1>
+                <h1 class="logo"><a href="index.html">jsinst</a></h1>
+                <ul class="menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="testcases.html">TestCases</a></li>
+                    <li><a href="https://github.com/nocoo/jsinst">GitHub</a></li>
+                </ul>
             </header>
             <section class="content">
                 <div id="qunit"></div>
@@ -28,27 +33,93 @@
                 seajs.use([ './js/jsinst' ], function (jsinst) {
                     module('Core');
                     test('timestamp', function() {
-                        ok(jsinst.timestamp() > 0, 'Passed');
+                        jsinst.reset();
+
+                        ok(jsinst.timestamp() > 0);
                     });
 
+                    module('Serialize');
+                    test('serialize', function() {
+                        jsinst.reset();
+
+                        var evt1 = { 'feature': '1', 'data': '1', 'timestamp': 1 };
+                        var evt2 = { 'feature': '2', 'data': '2', 'timestamp': 1 };
+                        var evt3 = { 'feature': '3', 'data': '3', 'timestamp': 1 };
+                        var expect = [
+                            '[',
+                            '{"f":"1","d":"1","ts":1},',
+                            '{"f":"2","d":"2","ts":1},',
+                            '{"f":"3","d":"3","ts":1}',
+                            ']'
+                        ].join('');
+
+                        jsinst.queue(evt1);
+                        jsinst.queue(evt2);
+                        jsinst.queue(evt3);
+
+                        equal(expect, jsinst.serialize());
+                    });
+
+                    module('Core');
                     asyncTest('timestamp', function() {
+                        jsinst.reset();
+
                         var ts1 = jsinst.timestamp(), sleep = parseInt(Math.random() * 1000);
                         setTimeout(function() {
                             var ts2 = jsinst.timestamp();
-                            ok(ts2 >= ts1 + sleep, 'Passed');
+                            ok(ts2 >= ts1 + sleep);
                             start();
                         }, sleep);
                     });
 
                     module('Callback');
                     asyncTest('event queue', function() {
+                        jsinst.reset();
+
                         var evt = { 'a': 1, 'b': '2' };
                         jsinst.register('queue', function(data) {
-                            equal(data, evt, 'Passed');
+                            equal(data, evt);
                             start();
                         }, this);
 
                         jsinst.queue(evt);
+                    });
+
+                    module('Core');
+                    asyncTest('start end', function() {
+                        jsinst.reset();
+
+                        jsinst.start();
+                        var sleep = parseInt(Math.random() * 1000);
+                        setTimeout(function() {
+                            var span = jsinst.end();
+                            ok(span >= sleep, [ span, sleep ]);
+                            start();
+                        }, sleep);
+                    });
+
+                    asyncTest('start end with name', function() {
+                        jsinst.reset();
+
+                        jsinst.start('perf1');
+                        jsinst.start('perf2');
+
+                        var sleep1 = parseInt(Math.random() * 1000);
+                        var sleep2 = parseInt(Math.random() * 1000);
+
+                        setTimeout(function() {
+                            var span = jsinst.end('perf1');
+                            ok(span >= sleep1, [ span, sleep1 ]);
+                        }, sleep1);
+
+                        setTimeout(function() {
+                            var span = jsinst.end('perf2');
+                            ok(span >= sleep2, [ span, sleep2 ]);
+                        }, sleep2);
+
+                        setTimeout(function() {
+                            start();
+                        }, (sleep1 > sleep2) ? sleep1 : sleep2);
                     });
                 });
             }());

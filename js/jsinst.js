@@ -13,7 +13,7 @@ define(function(require, exports, module) {
         'classname': 'jsinst',
         'feature': 'data-feature',
         'value': 'data-value',
-        'max_queue': 3,
+        'max_queue': 10,
         'endpoint': '/?data='
     };
 

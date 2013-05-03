@@ -26,11 +26,24 @@ table { border-collapse: collapse; border-spacing: 0; }
 .clearfix:after { clear: both; }
 .clearfix { *zoom: 1; }
 
-body { background: #EFEFEF; font-family: 'Segoe UI','SegoeUI','Arial','Helvetica'; font-size: 0.8em; }
+h1 { font-size: 28px; }
+h2 { font-size: 24px; }
+h3 { font-size: 22px; }
+h1, h2, h3 { border-bottom: 1px solid #CACACA; margin: 10px 0; line-height: 32px; color: #333; padding-bottom: 4px; font-family: wf_SegoeUILight, wf_SegoeUI, 'Segoe UI Light', 'Segoe WP Light', 'Segoe UI', Segoe, 'Segoe WP', Tahoma, Verdana, Arial, sans-serif; }
+
+body { background: #F1EBEB; font-family: 'Segoe UI','SegoeUI','Arial','Helvetica'; font-size: 0.8em; }
+a { color: #24C0EB; }
 header { border-bottom: 1px solid #DDD; }
-header h1 { font-size: 30px; line-height: 60px; margin: 20px 0 0 10px; color: #333; font-family: Consolas, 'Liberation Mono', Courier, monospace; }
+header h1 { font-size: 32px; line-height: 60px; margin: 20px 0 0 10px; font-family: Consolas, 'Liberation Mono', Courier, monospace; border: none; padding: 0; }
+header h1 a { text-decoration: none; color: #24C0EB; text-shadow: 1px 1px 10px #5CCEEE; }
+header .menu { background: #5CCEEE; height: 30px; padding: 0 10px; }
+header .menu li { float: left; line-height: 30px;  }
+header .menu li a { text-decoration: none; color: #FFF; display: block; padding: 0 5px; }
+header .menu li a:hover, header .menu li a:active { text-decoration: underline; background: #24C0EB; }
 footer { color: #555; text-align: center; border-top: 1px solid #DDD; line-height: 30px; }
+footer a { text-decoration: none; }
 .wrapper { width: 870px; margin: 10px auto; background: #FDFDFD; box-shadow: 1px 1px 10px 5px #dddddd; -webkit-box-shadow: 1px 1px 10px 5px #dddddd; -moz-box-shadow: 1px 1px 10px 5px #dddddd; }
-.content { padding: 20px 10px; }
-.console { font-family: Consolas, 'Liberation Mono', Courier, monospace; color: #FFF; background: #333; padding: 10px; margin: 10px 0; overflow-y: scroll; height: 300px; }
-.console p { line-height: 16px; margin-bottom: 8px; }
+.content { padding: 10px 10px; }
+.content p { color: #555; line-height: 20px; }
+.console { font-family: Consolas, 'Liberation Mono', Courier, monospace; color: #FFF; background: #F0F0F0; padding: 10px; margin: 10px 0; overflow-y: scroll; height: 300px; }
+.console p { line-height: 16px; margin-bottom: 8px; color: #333; text-shadow: 1px 1px 4px #CCC; }
