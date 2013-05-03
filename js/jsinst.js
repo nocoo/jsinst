@@ -13,11 +13,14 @@ define(function(require, exports, module) {
         'classname': 'jsinst',
         'feature': 'data-feature',
         'value': 'data-value',
-        'max_queue': 10
+        'max_queue': 3,
+        'endpoint': '/?data='
     };
 
     var dom_sender;
     var track_list = {}, event_queue = [];
+    var callback_queue = [], callback_send = [];
+    var serialize_map = { 'feature': 'f', 'data': 'd', 'timestamp': 'ts' };
 
     exports.reset = function() {
         delete track_list;
@@ -25,7 +28,6 @@ define(function(require, exports, module) {
 
         if (!dom_sender) {
             dom_sender = document.createElement('img');
-            dom_sender.setAttribute('src', 'ss');
             dom_sender.setAttribute('style', 'width:0;height:0;display:none;');
             var body = document.getElementsByTagName('body');
 
@@ -54,6 +56,9 @@ define(function(require, exports, module) {
                 item.removeEventListener('click', on_target_click);
                 item.addEventListener('click', on_target_click, true);
             }
+
+            event_queue = [];
+            event_send = [];
         }
     };
 
@@ -66,22 +71,39 @@ define(function(require, exports, module) {
 
         event_queue.push(event);
         if (event_queue.length >= global_config.max_queue) {
-            console.log('send');
+            exports.send(exports.serialize());
+            event_queue = [];
+        }
+
+        // Event
+        var item;
+        for (var i = 0, len = callback_queue.length; i < len; ++i) {
+            item = callback_queue[i];
+            if (item.callback && typeof(item.callback) === 'function') {
+                item.callback.apply(item.that, [ event ]);
+            }
         }
     };
 
-    exports.send = function() {
+    exports.send = function(data, method) {
         if (!global_config.enabled) { return; }
-
+        switch (method) {
+            default: {
+                if (dom_sender) {
+                    dom_sender.setAttribute('src', global_config.endpoint + data + '&' + exports.timestamp());
+                }
+                break;
+            }
+        }
     };
 
     exports.start = function(name) {
         name = name || 'default';
-        track_list[name] = timestamp();
+        track_list[name] = exports.timestamp();
     };
 
     exports.end = function(name) {
-        var ts = timestamp();
+        var ts = exports.timestamp();
 
         name = name || 'default';
 
@@ -100,7 +122,39 @@ define(function(require, exports, module) {
         console.log(event_queue);
     };
 
-    var timestamp = function() {
+    exports.register = function(event, callback, that) {
+        switch (event) {
+            case 'queue': {
+                callback_queue.push({ 'callback': callback, 'that': that });
+                break;
+            }
+            case 'send': {
+                callback_send.push({ 'callback': callback, 'that': that });
+                break;
+            }
+        }
+    };
+
+    exports.serialize = function() {
+        var cache = [], item;
+        cache.push('[');
+
+        for (var i = 0, len = event_queue.length; i < len; ++i) {
+            item = event_queue[i];
+            cache.push('{"' + serialize_map.feature + '":"' + item.feature + '",');
+            cache.push('"' + serialize_map.data + '":"' + item.data + '",');
+            cache.push('"' + serialize_map.timestamp + '":' + item.timestamp + '}');
+
+            if (i < len - 1) {
+                cache.push(',');
+            }
+        }
+
+        cache.push(']');
+        return cache.join('');
+    };
+
+    exports.timestamp = function() {
         return (new Date).getTime();
     };
 

@@ -1,0 +1,33 @@
+/*
+    jsInst
+    @copyright 2013  Zheng Li <lizheng@lizheng.me>
+    @github https://github.com/nocoo/jsinst
+    @license MIT
+*/
+
+define(function(require, exports, module) {
+    var config = {
+        'auto_scroll': true
+    };
+    var el = document.getElementById('console');
+
+    exports.log = function(message, id, native) {
+        if (id) {
+            el = document.getElementById(id);
+        }
+
+        if (el) {
+            var dom = document.createElement('p');
+            dom.innerText = message;
+            el.appendChild(dom);
+
+            if (config.auto_scroll) {
+                el.scrollTop = el.scrollHeight;
+            }
+        }
+
+        if (native) {
+            console.log(message);
+        }
+    };
+});

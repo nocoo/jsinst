@@ -32,3 +32,5 @@ header h1 { font-size: 30px; line-height: 60px; margin: 20px 0 0 10px; color: #3
 footer { color: #555; text-align: center; border-top: 1px solid #DDD; line-height: 30px; }
 .wrapper { width: 870px; margin: 10px auto; background: #FDFDFD; box-shadow: 1px 1px 10px 5px #dddddd; -webkit-box-shadow: 1px 1px 10px 5px #dddddd; -moz-box-shadow: 1px 1px 10px 5px #dddddd; }
 .content { padding: 20px 10px; }
+.console { font-family: Consolas, 'Liberation Mono', Courier, monospace; color: #FFF; background: #333; padding: 10px; margin: 10px 0; overflow-y: scroll; height: 300px; }
+.console p { line-height: 16px; margin-bottom: 8px; }

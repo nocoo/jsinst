@@ -3,40 +3,53 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="author" content="@zhengli" />
-        <title>jsInst</title>
+        <title>jsinst - Test Cases</title>
+        <link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.11.0.css" />
+        <link rel="stylesheet" type="text/css" href="./css/main.css" />
     </head>
-    <body>
-        <ul>
-            <li class="jsinst" data-feature="ul-li" data-value="1">Item1</li>
-            <li class="jsinst" data-feature="ul-li" data-value="2">Item2</li>
-            <li class="jsinst" data-feature="ul-li" data-value="3">Item3</li>
-            <li class="jsinst" data-feature="ul-li" data-value="4">Item4</li>
-            <li class="jsinst" data-feature="ul-li" data-value="5">Item5</li>
-        </ul>
+    <body class="p-testcases">
+        <div class="wrapper">
+            <header>
+                <h1 class="logo jsinst" data-feature="logo" data-value="click">jsinst</h1>
+            </header>
+            <section class="content">
+                <div id="qunit"></div>
+                <div id="qunit-fixture"></div>
+            </section>
+            <footer><p>jsinst 0.0.1, the MIT License, <a href="http://about.me/nocoo">@zhengli</a>, <a href="https://github.com/nocoo/jsinst">Github</a></p></footer>
+        </div>
 
+        <script id="seajsnode" src="http://code.jquery.com/qunit/qunit-1.11.0.js"></script>
         <script id="seajsnode" src="./js/sea.min.js"></script>
         <script>
             (function () {
                 'use strict';
                 /*global seajs*/
                 seajs.use([ './js/jsinst' ], function (jsinst) {
-                    window.jsinst = jsinst;
-                    jsinst.start('sum');
+                    module('Core');
+                    test('timestamp', function() {
+                        ok(jsinst.timestamp() > 0, 'Passed');
+                    });
 
-                    var sum = 0;
-                    for (var i = 0; i < 99999999; ++i) {
-                        if (i === 59999999) {
-                            jsinst.start('sum_half');
-                        }
+                    asyncTest('timestamp', function() {
+                        var ts1 = jsinst.timestamp(), sleep = parseInt(Math.random() * 1000);
+                        setTimeout(function() {
+                            var ts2 = jsinst.timestamp();
+                            ok(ts2 >= ts1 + sleep, 'Passed');
+                            start();
+                        }, sleep);
+                    });
 
-                        sum += i;
-                    }
+                    module('Callback');
+                    asyncTest('event queue', function() {
+                        var evt = { 'a': 1, 'b': '2' };
+                        jsinst.register('queue', function(data) {
+                            equal(data, evt, 'Passed');
+                            start();
+                        }, this);
 
-
-                    var result = jsinst.end('sum');
-                    var result2 = jsinst.end('sum_half');
-                    console.log(result);
-                    console.log(result2);
+                        jsinst.queue(evt);
+                    });
                 });
             }());
         </script>
