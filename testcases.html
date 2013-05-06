@@ -123,6 +123,26 @@
                             start();
                         }, (sleep1 > sleep2) ? sleep1 : sleep2);
                     });
+
+                    module('Core');
+                    test('settings', function() {
+                        jsinst.reset();
+
+                        var my_settings = {
+                            'enabled': false,
+                            'classname': 'a',
+                            'feature': 'b',
+                            'value': 'c',
+                            'max_queue': 2,
+                            'method': 'd',
+                            'endpoint': 'e',
+                            'data_name': 'f'
+                        };
+
+                        jsinst.settings(my_settings);
+
+                        deepEqual(my_settings, jsinst.settings());
+                    });
                 });
             }());
         </script>

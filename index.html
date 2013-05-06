@@ -26,22 +26,22 @@
                 <p>It's fast, small and without dependency, have a try!</p>
 
                 <h2 class="jsinst" data-feature="howitworks" data-value="click">How jsinst works</h2>
-                <section class="form">
-                    <p>Please play with this form and watch the console output.</p>
-                    <p>
-                        <input class="jsinst" data-feature="inputbox" data-value="default" type="text" placeholder="Type some thing here." />
-                        <select class="jsinst" data-feature="option" data-value="select">
-                            <option>Option A</option>
-                            <option>Option B</option>
-                            <option>Option C</option>
-                        </select>
-                    </p>
-                    <p>
-                        <input class="btn btn-success jsinst" data-feature="button" data-value="ok" type="button" value="Go Ahead" />
-                        <input class="btn btn-danger jsinst" data-feature="button" data-value="abort" type="button" value="Abort" />
-                    </p>
-                </section>
+                <h3>Step 1: Make some moves</h3>
+                <p>Please play with this form and watch the console output. Default queue size is 5, which means that you need to click at least 5 times.</p>
+                <p>
+                    <input class="jsinst" data-feature="inputbox" data-value="default" type="text" placeholder="Type some thing here." />
+                    <select class="jsinst" data-feature="option" data-value="select">
+                        <option>Option A</option>
+                        <option>Option B</option>
+                        <option>Option C</option>
+                    </select>
+                </p>
+                <p>
+                    <input class="btn btn-success jsinst" data-feature="button" data-value="ok" type="button" value="Go Ahead" />
+                    <input class="btn btn-danger jsinst" data-feature="button" data-value="abort" type="button" value="Abort" />
+                </p>
 
+                <h3>Step 2: Watch the output, or debug it!</h3>
                 <section id="console" class="console"></section>
 
                 <h2>The MIT License</h2>
@@ -59,9 +59,7 @@
                 /*global $script*/
                 $script(['./js/jsinst.console.js', './js/jsinst.js'], 'jsinst');
                 $script.ready('jsinst', function () {
-                    for (var i = 0; i < 100; ++i) {
-                        jsinst.log('Hello World: ' + i);
-                    }
+                    jsinst.log('All system is ready to go!');;
 
                     jsinst.register('queue', function(data) {
                         jsinst.log('Queue Event: ' + JSON.stringify(data));

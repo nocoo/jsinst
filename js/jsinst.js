@@ -7,18 +7,18 @@
 
 var jsinst;
 (function(jsinst) {
-    var global_config = {
+    var default_global_config = {
         'enabled': true,
         'classname': 'jsinst',
         'feature': 'data-feature',
         'value': 'data-value',
-        'max_queue': 3,
-        'method': 'get',
-        'endpoint': '/',
-        'data': 'data'
+        'max_queue': 5,
+        'method': 'image',
+        'endpoint': '/?',
+        'data_name': 'data'
     };
 
-    var dom_sender, track_list, event_queue, callback_queue, callback_send;
+    var dom_sender, track_list, event_queue, callback_queue, callback_send, global_config;
     var serialize_map = { 'feature': 'f', 'data': 'd', 'timestamp': 'ts' };
 
     var addHandler = function(target, event, handler) {
@@ -46,11 +46,13 @@ var jsinst;
         delete event_queue;
         delete callback_queue;
         delete callback_send;
+        delete global_config;
 
         track_list = {};
         event_queue = [];
         callback_queue = [];
         callback_send = [];
+        global_config = default_global_config;
 
         if (global_config.enabled) {
             // Register click event to jsinst elements.
@@ -85,7 +87,7 @@ var jsinst;
             };
 
             var on_window_unload = function(evt) {
-                jsinst.send(jsinst.serialize(), false);
+                jsinst.send(event_queue, false);
                 event_queue = [];
             };
 
@@ -103,7 +105,7 @@ var jsinst;
 
         event_queue.push(event);
         if (event_queue.length >= global_config.max_queue) {
-            jsinst.send(jsinst.serialize(), true);
+            jsinst.send(event_queue, true);
             event_queue = [];
         }
 
@@ -119,22 +121,23 @@ var jsinst;
 
     jsinst.send = function(data, async) {
         if (!global_config.enabled) { return; }
-        if (data == '[]') { return; }
+        if (!data || data.length === 0) { return; }
 
         var xhr = new XMLHttpRequest();
-        var url_get = global_config.endpoint + '?' + global_config.data + '=' + encodeURIComponent(data) + '&' + jsinst.timestamp();
+        var url_base = global_config.endpoint;
+        var data = encodeURIComponent(global_config.data_name) + '=' + encodeURIComponent(jsinst.serialize());
 
         switch (global_config.method.toLowerCase()) {
             case 'image':
             default: {
                 if (dom_sender) {
-                    dom_sender.setAttribute('src', url_get);
+                    dom_sender.setAttribute('src', url_base + data);
                 }
                 break;
             }
             case 'head': {
                 if (xhr) {
-                    xhr.open('HEAD', url_get, async);
+                    xhr.open('HEAD', url_base + data, async);
                     xhr.send(null);
                 }
 
@@ -142,7 +145,7 @@ var jsinst;
             }
             case 'get': {
                 if (xhr) {
-                    xhr.open('GET', url_get, async);
+                    xhr.open('GET', url_base + data, async);
                     xhr.send(null);
                 }
 
@@ -150,8 +153,8 @@ var jsinst;
             }
             case 'post': {
                 if (xhr) {
-                    xhr.open('POST', global_config.endpoint, async);
-                    xhr.send(encodeURIComponent(global_config.data) + '=' + encodeURIComponent(data));
+                    xhr.open('POST', url_base, async);
+                    xhr.send(data);
                 }
 
                 break;
@@ -187,10 +190,17 @@ var jsinst;
         }
     };
 
-    jsinst.info = function() {
-        console.log(global_config);
-        console.log(track_list);
-        console.log(event_queue);
+    jsinst.settings = function(setting) {
+        for (var item in global_config) {
+            if (setting &&
+                global_config[item] != undefined && setting[item] != undefined &&
+                global_config[item] != null && setting[item] != null &&
+                typeof(global_config[item]) === typeof(setting[item])) {
+                global_config[item] = setting[item];
+            }
+        }
+
+        return global_config;
     };
 
     jsinst.register = function(event, callback, that) {
