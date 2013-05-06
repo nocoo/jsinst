@@ -1,5 +1,5 @@
 /*
-    jsInst
+    jsinst
     @copyright 2013  Zheng Li <lizheng@lizheng.me>
     @github https://github.com/nocoo/jsinst
     @license MIT
